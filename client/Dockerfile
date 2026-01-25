@@ -1,20 +1,19 @@
-FROM node:24-alpine as build
+FROM oven/bun:1 AS base
+FROM nginx:1.29-alpine AS webserver
+
+FROM base AS build
 
 WORKDIR /app
 
-RUN corepack enable pnpm && \
-  corepack prepare pnpm --activate && \
-  yes | pnpm -v
+COPY package.json bun.lock ./
 
-COPY pnpm-lock.yaml package.json ./
-
-RUN pnpm install
+RUN bun i
 
 COPY . .
 
-RUN pnpm run build
+RUN bun run build
 
-FROM nginx:1.27-alpine
+FROM webserver
 
 WORKDIR /usr/share/nginx/html
 
