@@ -15,14 +15,14 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version-file: ".bun-version" 
+          bun-version-file: "./client/.bun-version" 
 
       - name: Install dependencies & Build static files
         id: build
         run: |
          cd client
          bun install
-         bun run build
+         bun run build:github
 
       - name: Upload static files as artifact
         id: deployment
