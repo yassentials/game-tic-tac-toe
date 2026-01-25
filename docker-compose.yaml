@@ -1,6 +1,6 @@
 services:
   client:
-    image: ghcr.io/ilyasa1211/game-tictactoe-client:latest
+    image: ghcr.io/yassentials/game-tic-tac-toe/client:latest
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -8,7 +8,7 @@ services:
       - "80:80"
   
   server:
-    image: ghcr.io/ilyasa1211/game-tictactoe-server:latest
+    image: ghcr.io/yassentials/game-tic-tac-toe/server:latest
     build:
       context: ./server
       dockerfile: Dockerfile
