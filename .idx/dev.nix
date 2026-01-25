@@ -13,6 +13,11 @@
     # pkgs.nodejs_20
     # pkgs.nodePackages.nodemon
   ];
+  services = {
+    docker = {
+      enable = true;
+    };
+  };
 
   # Sets environment variables in the workspace
   env = {};
