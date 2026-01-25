@@ -13,29 +13,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
-      - uses: pnpm/action-setup@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          version: 10
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: 'pnpm'
-          cache-dependency-path: client/pnpm-lock.yaml
+          bun-version-file: ".bun-version" 
 
       - name: Install dependencies & Build static files
         id: build
         run: |
          cd client
-         pnpm install
-         pnpm run build
+         bun install
+         bun run build
 
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
-          path: .client/dist/
+          path: ./client/dist/
 
   deploy:
     permissions:
