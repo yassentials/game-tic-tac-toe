@@ -24,6 +24,9 @@ jobs:
       id-token: write
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        
       - name: Docker Login
         uses: docker/login-action@v3
         with:
