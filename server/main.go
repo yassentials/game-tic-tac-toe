@@ -1,44 +1,42 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/yassentials/game-tic-tac-toe/server/command"
+	"github.com/yassentials/game-tic-tac-toe/server/common"
+	"github.com/yassentials/game-tic-tac-toe/server/infra"
 )
 
 var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		s := r.Header.Get("origin")
+		fmt.Printf("origin: %s\n", s)
+
+		return true
+	},
 }
 
+const GAME_CODE_LENGTH = 5
+
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Header)
-		conn, err := upgrader.Upgrade(w, r, nil)
+	lobby := infra.NewInMemoryLobby()
 
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		defer conn.Close()
-
-		for {
-			messageType, message, err := conn.ReadMessage()
-
-			if err != nil {
-				log.Println(err)
-				return
-			}
-
-			log.Printf("recv: %s", message)
-
-			if err := conn.WriteMessage(messageType, message); err != nil {
-				log.Println(err)
-				return
-			}
-		}
+	handler := NewWebsocketHandler(WebsocketHandlerCommand{
+		CreateGame: command.NewCreateGame(lobby, GAME_CODE_LENGTH, func() string {
+			return common.GenRandomCode(GAME_CODE_LENGTH)
+		}),
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.HandleFunc("/www", handler.Handle)
+
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Println("failed to listen http server", err)
+		return
+	}
 }

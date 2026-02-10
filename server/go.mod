@@ -1,4 +1,4 @@
-module github.com/ilyasa1211/game-tic-tac-toe/server
+module github.com/yassentials/game-tic-tac-toe/server
 
 go 1.24.4
 
