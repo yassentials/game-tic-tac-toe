@@ -42,6 +42,7 @@ jobs:
         id: push
         with:
           context: ./client
+          file: ./client/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/client:latest
 
