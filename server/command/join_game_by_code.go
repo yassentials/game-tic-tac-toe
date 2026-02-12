@@ -19,26 +19,29 @@ func NewJoinGameByCodeHandler(lobby domain.Lobby, codeLength int) *JoinGameByCod
 }
 
 type JoinGameByCodeCommand struct {
-	Player domain.Player
-	Code   string
+	PlayerName       string
+	PlayerCharacater domain.Character
+	Code             string
 }
 
-func (h *JoinGameByCodeHandler) Handle(cmd JoinGameByCodeCommand) (domain.Game, error) {
+func (h *JoinGameByCodeHandler) Handle(cmd JoinGameByCodeCommand) (domain.Game, domain.Player, error) {
 	code := cmd.Code
 
 	if len(code) != h.codeLength {
-		return nil, fmt.Errorf("code must be equal to %d digit\n", h.codeLength)
+		return nil, nil, fmt.Errorf("[Join Code] code must be equal to %d digit\n", h.codeLength)
 	}
 
 	game, err := h.lobby.FindGameByCode(code)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, fmt.Errorf("[Join Code] Failed: %w", err)
 	}
 
-	if err := game.Join(cmd.Player); err != nil {
-		return nil, fmt.Errorf("[Join Game] Failed: %w", err)
+	player := domain.NewGamePlayer(cmd.PlayerName, cmd.PlayerCharacater)
+
+	if err := game.Join(player); err != nil {
+		return nil, nil, fmt.Errorf("[Join Code] Failed: %w", err)
 	}
 
-	return game, nil
+	return game, player, nil
 }

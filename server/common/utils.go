@@ -2,8 +2,6 @@ package common
 
 import (
 	"math/rand/v2"
-
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
 )
 
 func GenRandomCode(length int) string {
@@ -18,10 +16,4 @@ func GenRandomCode(length int) string {
 	}
 
 	return string(result)
-}
-
-func GetRandomCharacter() domain.Character {
-	availableChar := []domain.Character{domain.CHAR_O, domain.CHAR_X}
-
-	return availableChar[rand.IntN(len(availableChar))]
 }

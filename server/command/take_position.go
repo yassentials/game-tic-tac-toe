@@ -24,11 +24,11 @@ type TakePositionCommand struct {
 
 func (h *TakePositionHandler) Handle(cmd TakePositionCommand) error {
 	if cmd.Player == nil {
-		return errors.New("player hasn't been initialized")
+		return errors.New("[Failed Take]: player hasn't been initialized")
 	}
 
 	if cmd.Game == nil {
-		return errors.New("game hasn't been initialized")
+		return errors.New("[Failed Take]: game hasn't been initialized")
 	}
 
 	game := cmd.Game
@@ -47,7 +47,7 @@ func (h *TakePositionHandler) Handle(cmd TakePositionCommand) error {
 			game.GetEventManager().Dispatch(event.NewResultAnnouncedEvent(result, winner))
 		case domain.GAME_RESULT_NONE:
 		default:
-			return fmt.Errorf("[Result None or Unknown]\n")
+			return fmt.Errorf("[Failed Take] Result None or Unknown\n")
 		}
 	}
 

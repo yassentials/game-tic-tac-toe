@@ -5,12 +5,15 @@ type Event[T any] interface {
 	GetName() string
 }
 
+type Listener func(e Event[any])
+type Unlistener func()
+
 type EventDispatcher[T any] interface {
 	Dispatch(e Event[T])
 }
 
 type EventListener[T any] interface {
-	Listen(name string, listener func(e Event[T]))
+	Listen(name string, listener Listener) Unlistener
 }
 
 type EventManager[T any] interface {

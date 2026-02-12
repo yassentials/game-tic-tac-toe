@@ -5,38 +5,46 @@ import (
 
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
 	"github.com/yassentials/game-tic-tac-toe/server/event"
+	"github.com/yassentials/game-tic-tac-toe/server/infra"
 )
 
 type CreateGameHandler struct {
-	lobby   domain.Lobby
-	codeGen func() string
+	lobby        domain.Lobby
+	codeGen      func() string
+	eventManager domain.EventManager[any]
 }
 
 func NewCreateGame(lobby domain.Lobby, codeGen func() string) CreateGameHandler {
-	return CreateGameHandler{lobby, codeGen}
+	return CreateGameHandler{
+		lobby:        lobby,
+		codeGen:      codeGen,
+		eventManager: infra.NewInMemoryEventManager(),
+	}
 }
 
 type CreateGameCommand struct {
-	Player       domain.Player
-	Type         domain.GameType
-	EventManager domain.EventManager[any]
+	PlayerName       string
+	PlayerCharacater domain.Character
+	Type             domain.GameType
 }
 
-func (h CreateGameHandler) Handle(cmd CreateGameCommand) (domain.Game, error) {
+func (h CreateGameHandler) Handle(cmd CreateGameCommand) (domain.Game, domain.Player, error) {
 	const CAPACITY = 2
 
-	game := domain.NewBaseGame(CAPACITY, cmd.Type, cmd.EventManager, h.codeGen)
+	game := domain.NewBaseGame(CAPACITY, cmd.Type, h.eventManager, h.codeGen)
 
 	game.GetEventManager().Listen(event.EVENT_ROOM_FULL, func(e domain.Event[any]) {
 		game.Restart()
 	})
 
+	player := domain.NewGamePlayer(cmd.PlayerName, cmd.PlayerCharacater)
+
 	// join self
-	if err := game.Join(cmd.Player); err != nil {
-		return nil, fmt.Errorf("[Join Game] Failed: %w", err)
+	if err := game.Join(player); err != nil {
+		return nil, nil, fmt.Errorf("[Join Game] Failed: %w", err)
 	}
 
 	h.lobby.AddGame(game)
 
-	return game, nil
+	return game, player, nil
 }

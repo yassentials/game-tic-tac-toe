@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"maps"
 	"sync"
 
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
@@ -8,27 +9,28 @@ import (
 
 type InMemoryEventManager struct {
 	mu               sync.RWMutex
-	eventSubscribers map[string][]func(e domain.Event[any])
+	eventSubscribers map[string]map[int]domain.Listener
+	nextId           int
 }
 
 func NewInMemoryEventManager() *InMemoryEventManager {
 	return &InMemoryEventManager{
-		eventSubscribers: map[string][]func(e domain.Event[any]){},
+		eventSubscribers: map[string]map[int]domain.Listener{},
+		nextId:           0,
 	}
 }
 
 func (em *InMemoryEventManager) Dispatch(e domain.Event[any]) {
 	em.mu.RLock()
-	listeners, exists := em.eventSubscribers[e.GetName()]
+	subs, exists := em.eventSubscribers[e.GetName()]
 
 	if !exists {
 		em.mu.RUnlock()
 		return
 	}
 
-	// make sure data didn't change
-	temp := make([]func(e domain.Event[any]), len(listeners))
-	copy(temp, listeners)
+	// make sure if original map change, doesn't effect the process
+	temp := maps.Clone(subs)
 
 	em.mu.RUnlock()
 
@@ -37,6 +39,17 @@ func (em *InMemoryEventManager) Dispatch(e domain.Event[any]) {
 	}
 }
 
-func (em *InMemoryEventManager) Listen(name string, listener func(e domain.Event[any])) {
-	em.eventSubscribers[name] = append(em.eventSubscribers[name], listener)
+func (em *InMemoryEventManager) Listen(name string, listener domain.Listener) domain.Unlistener {
+	em.mu.Lock()
+	defer em.mu.Unlock()
+
+	id := em.nextId
+	em.nextId++
+
+	subs := em.eventSubscribers[name]
+	subs[id] = listener
+
+	return func() {
+		delete(subs, id)
+	}
 }

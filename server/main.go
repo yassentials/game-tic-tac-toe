@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,15 +29,24 @@ func main() {
 	lobby := infra.NewInMemoryLobby()
 
 	handler := NewWebsocketHandler(WebsocketHandlerCommand{
-		CreateGame: command.NewCreateGame(lobby, GAME_CODE_LENGTH, func() string {
+		CreateGame: command.NewCreateGame(lobby, func() string {
 			return common.GenRandomCode(GAME_CODE_LENGTH)
 		}),
 	})
 
 	http.HandleFunc("/www", handler.Handle)
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Println("failed to listen http server", err)
-		return
-	}
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		defer cancel()
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			log.Println("failed to listen http server", err)
+			return
+		}
+	}()
+
+	fmt.Println("Http server listening.")
+
+	<-ctx.Done()
 }

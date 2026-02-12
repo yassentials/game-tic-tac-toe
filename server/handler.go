@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 	"github.com/yassentials/game-tic-tac-toe/server/command"
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
 	"github.com/yassentials/game-tic-tac-toe/server/event"
-	"github.com/yassentials/game-tic-tac-toe/server/infra"
 )
 
 type RequestType int
@@ -35,6 +35,22 @@ type BaseMessage[T RequestType | ResponseType] struct {
 type CreateGameRequest struct {
 	BaseMessage[RequestType]
 
+	Name       string           `json:"nam"`
+	Character  domain.Character `json:"cha"`
+	Visibility domain.GameType  `json:"vis"`
+}
+
+type JoinGameWithCodeRequest struct {
+	BaseMessage[RequestType]
+
+	Name      string           `json:"nam"`
+	Character domain.Character `json:"cha"`
+	Code      string           `json:"cod"`
+}
+
+type JoinRandomGameRequest struct {
+	BaseMessage[RequestType]
+
 	Name      string           `json:"nam"`
 	Character domain.Character `json:"cha"`
 }
@@ -49,6 +65,7 @@ type WebsocketHandlerCommand struct {
 	CreateGame     command.CreateGameHandler
 	JoinGameByCode command.JoinGameByCodeHandler
 	JoinRandomGame command.JoinRandomGameHandler
+	LeaveGame      command.LeaveGameHandler
 	TakePosition   command.TakePositionHandler
 }
 
@@ -64,6 +81,9 @@ func NewWebsocketHandler(cmd WebsocketHandlerCommand) WebsocketHandler {
 
 func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	if err != nil {
 		log.Printf("[Connection Upgrade] failed: %s\n", err.Error())
@@ -81,7 +101,7 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		<-ready
 
-		activeGame.GetEventManager().Listen(event.EVENT_TAKE_POSITION_SUCCEED, func(e domain.Event[any]) {
+		unlistener := activeGame.GetEventManager().Listen(event.EVENT_TAKE_POSITION_SUCCEED, func(e domain.Event[any]) {
 			data, ok := e.GetData().(event.TakePositionSucceedEventData)
 
 			if !ok {
@@ -91,12 +111,23 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 			conn.WriteJSON(data)
 		})
+
+		<-ctx.Done()
+
+		h.cmd.LeaveGame.Handle(command.LeaveGameCommand{
+			Player: player,
+			Game:   activeGame,
+		})
+
+		unlistener()
 	}()
 
 	for {
 		var baseReq BaseMessage[RequestType]
 
-		_, msg, err := conn.ReadMessage()
+		msgType, msg, err := conn.ReadMessage()
+
+		log.Printf("Message type: %s\n", msgType)
 
 		if err != nil {
 			log.Printf("[Read Message] failed: %s\n", err.Error())
@@ -117,13 +148,10 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
-			player = domain.NewGamePlayer(req.Name, req.Character)
-			eventManager := infra.NewInMemoryEventManager()
-
-			activeGame, err = h.cmd.CreateGame.Handle(command.CreateGameCommand{
-				Player:       player,
-				Type:         domain.GAME_TYPE_PUBLIC,
-				EventManager: eventManager,
+			activeGame, player, err = h.cmd.CreateGame.Handle(command.CreateGameCommand{
+				Type:             domain.GAME_TYPE_PUBLIC,
+				PlayerName:       req.Name,
+				PlayerCharacater: req.Character,
 			})
 
 			if err != nil {
@@ -133,18 +161,44 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 			close(ready)
 		case TYPE_REQ_GAME_JOIN_RANDOM:
-			activeGame, err = h.cmd.JoinRandomGame.Handle(command.JoinRandomGameCommand{
-				// TODO
+			var req JoinRandomGameRequest
+
+			if err = json.Unmarshal(msg, &req); err != nil {
+				log.Printf("[Parse JSON] failed: %s\n", err.Error())
+				continue
+			}
+
+			activeGame, player, err = h.cmd.JoinRandomGame.Handle(command.JoinRandomGameCommand{
+				PlayerName:       req.Name,
+				PlayerCharacater: req.Character,
 			})
 
 			if err != nil {
-				log.Printf("[Join Game Random] failed: %s\n", err.Error())
+				log.Printf("[Join Random] failed: %s\n", err.Error())
 				continue
 			}
 
 			close(ready)
 		case TYPE_REQ_GAME_JOIN_CODE:
+			var req JoinGameWithCodeRequest
 
+			if err = json.Unmarshal(msg, &req); err != nil {
+				log.Printf("[Parse JSON] failed: %s\n", err.Error())
+				continue
+			}
+
+			activeGame, player, err = h.cmd.JoinGameByCode.Handle(command.JoinGameByCodeCommand{
+				PlayerName:       req.Name,
+				PlayerCharacater: req.Character,
+				Code:             req.Code,
+			})
+
+			if err != nil {
+				log.Printf("[Join Code] failed: %s\n", err.Error())
+				continue
+			}
+
+			close(ready)
 		case TYPE_REQ_ACTION_TAKE:
 			var req TakePositionRequest
 

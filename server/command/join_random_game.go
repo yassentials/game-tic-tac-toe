@@ -18,24 +18,31 @@ func NewJoinRandomGameHandler(lobby domain.Lobby) *JoinRandomGameHandler {
 }
 
 type JoinRandomGameCommand struct {
-	Player domain.Player
+	PlayerName       string
+	PlayerCharacater domain.Character
 }
 
-func (h *JoinRandomGameHandler) Handle(cmd JoinRandomGameCommand) (domain.Game, error) {
-	game := h.lobby.FindRandomGameAvailable()
+func (h *JoinRandomGameHandler) Handle(cmd JoinRandomGameCommand) (domain.Game, domain.Player, error) {
+	game, err := h.lobby.FindRandomGameAvailable()
 
-	if err := game.Join(cmd.Player); err != nil {
-		return nil, fmt.Errorf("[Join Game] Failed: %w", err)
+	if err != nil {
+		return nil, nil, fmt.Errorf("[Join Random Game] Failed: %w", err)
+	}
+
+	player := domain.NewGamePlayer(cmd.PlayerName, cmd.PlayerCharacater)
+
+	if err := game.Join(player); err != nil {
+		return nil, nil, fmt.Errorf("[Join Random Game] Failed: %w", err)
 	}
 
 	game.GetEventManager().Dispatch(event.NewPlayerJoinedEvent(event.PlayerJoinedEventData{
-		Name:      cmd.Player.GetName(),
-		Character: cmd.Player.GetCharacter(),
+		Name:      player.GetName(),
+		Character: player.GetCharacter(),
 	}))
 
 	if game.IsFull() {
 		game.GetEventManager().Dispatch(event.NewRoomFullEvent())
 	}
 
-	return game, nil
+	return game, player, nil
 }

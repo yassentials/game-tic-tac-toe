@@ -1,21 +1,29 @@
 package domain
 
+import "math/rand/v2"
+
 type Player interface {
+	GetId() int
 	GetName() string
 	GetCharacter() Character
 	SetCharacter(char Character)
 }
 
 type GamePlayer struct {
+	id        int
 	name      string
 	character Character
 }
 
 func NewGamePlayer(name string, character Character) *GamePlayer {
 	return &GamePlayer{
-		name,
-		character,
+		id:        rand.Int(),
+		name:      name,
+		character: character,
 	}
+}
+func (p *GamePlayer) GetId() int {
+	return p.id
 }
 
 func (p *GamePlayer) GetName() string {

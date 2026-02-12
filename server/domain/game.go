@@ -2,6 +2,8 @@ package domain
 
 import (
 	"fmt"
+	"math/rand/v2"
+	"slices"
 	"sync"
 )
 
@@ -17,6 +19,7 @@ const (
 
 const (
 	GAME_STATE_MATCHMAKING GameState = iota
+	GAME_STATE_INITIALIZING
 	GAME_STATE_PLAYING
 	GAME_STATE_RESULT
 )
@@ -33,6 +36,7 @@ type Room interface {
 	// unique code for joining the room
 	GetCode() string
 	IsFull() bool
+	IsPublic() bool
 	Join(player Player) error
 	Leave(player Player)
 }
@@ -42,7 +46,6 @@ type Game interface {
 
 	GetEventManager() EventManager[any]
 	GetResult() GameResult
-	GetType() GameType
 	GetState() GameState
 	SetState(state GameState) error
 	Restart()
@@ -67,7 +70,7 @@ type BaseGame struct {
 
 func NewBaseGame(capacity int, gameType GameType, eventManager EventManager[any], codeGen func() string) *BaseGame {
 	game := &BaseGame{
-		turn:         0,
+		turn:         rand.IntN(capacity),
 		gameType:     gameType,
 		state:        GAME_STATE_MATCHMAKING,
 		code:         codeGen(),
@@ -81,13 +84,15 @@ func NewBaseGame(capacity int, gameType GameType, eventManager EventManager[any]
 }
 
 func (g *BaseGame) Restart() {
-	g.turn = 0
-	g.state = GAME_STATE_PLAYING
+	g.state = GAME_STATE_INITIALIZING
+	g.turn = rand.IntN(g.capacity)
 	g.board = make([]Character, 3*3)
-}
 
-func (g *BaseGame) GetType() GameType {
-	return g.gameType
+	if len(g.players) >= g.capacity {
+		g.assignPlayersCharacter()
+	}
+
+	g.state = GAME_STATE_PLAYING
 }
 
 func (g *BaseGame) GetResult() GameResult {
@@ -107,11 +112,20 @@ func (g *BaseGame) SetState(state GameState) error {
 	return nil
 }
 
+func (g *BaseGame) IsPublic() bool {
+	return g.gameType == GAME_TYPE_PUBLIC
+}
+
 func (g *BaseGame) GetEventManager() EventManager[any] {
 	return g.eventManager
 }
 func (g *BaseGame) TakePosition(player Player, index int) error {
 	g.mu.Lock()
+
+	if g.state != GAME_STATE_PLAYING {
+		g.mu.Unlock()
+		return fmt.Errorf("[Game State Mismatch] expected %d, got %d.\n", GAME_STATE_PLAYING, g.state)
+	}
 
 	if index < 0 || index >= len(g.board) {
 		g.mu.Unlock()
@@ -157,7 +171,15 @@ func (g *BaseGame) Join(player Player) error {
 }
 
 func (g *BaseGame) Leave(player Player) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
 
+	for i, p := range g.players {
+		if p.GetId() == player.GetId() {
+			g.players = slices.Delete(g.players, i, i+1)
+			break
+		}
+	}
 }
 
 func (g *BaseGame) getCurrentPlayer() Player {
@@ -168,6 +190,17 @@ func (g *BaseGame) getCurrentPlayer() Player {
 
 func (g *BaseGame) GetWinner() Player {
 	return g.winner
+}
+
+func (g *BaseGame) assignPlayersCharacter() {
+	availableChar := []Character{CHAR_O, CHAR_X}
+	i := rand.IntN(len(availableChar))
+
+	for _, p := range g.players {
+		p.SetCharacter(availableChar[i])
+		i++
+		i %= len(availableChar)
+	}
 }
 
 // should be called before acquireTurn()
@@ -221,5 +254,6 @@ func (g *BaseGame) determineResult() {
 func (g *BaseGame) acquireTurn() {
 	g.mu.Lock()
 	defer g.mu.Unlock()
+	g.turn++
 	g.turn %= g.capacity
 }
