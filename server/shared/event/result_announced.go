@@ -10,14 +10,14 @@ type ResultAnnouncedEventData struct {
 }
 
 type ResultAnnouncedEvent struct {
-	name string
-	data ResultAnnouncedEventData
+	Name string                   `json:"name"`
+	Data ResultAnnouncedEventData `json:"data"`
 }
 
 func NewResultAnnouncedEvent(result domain.GameResult, player domain.Player) *ResultAnnouncedEvent {
 	return &ResultAnnouncedEvent{
-		name: EVENT_RESULT_ANNOUNCED,
-		data: ResultAnnouncedEventData{
+		Name: EVENT_RESULT_ANNOUNCED,
+		Data: ResultAnnouncedEventData{
 			Result: result,
 			Player: player,
 		},
@@ -25,9 +25,9 @@ func NewResultAnnouncedEvent(result domain.GameResult, player domain.Player) *Re
 }
 
 func (e *ResultAnnouncedEvent) GetData() any {
-	return e.data
+	return e.Data
 }
 
 func (e *ResultAnnouncedEvent) GetName() string {
-	return e.name
+	return e.Name
 }

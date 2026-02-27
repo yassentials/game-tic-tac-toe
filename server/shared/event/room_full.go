@@ -3,19 +3,21 @@ package event
 const EVENT_ROOM_FULL = "room-full"
 
 type RoomFullEvent struct {
-	name string
+	Name string   `json:"name"`
+	Data struct{} `json:"data"`
 }
 
 func NewRoomFullEvent() *RoomFullEvent {
 	return &RoomFullEvent{
-		name: EVENT_ROOM_FULL,
+		Name: EVENT_ROOM_FULL,
+		Data: struct{}{},
 	}
 }
 
 func (e *RoomFullEvent) GetData() any {
-	return struct{}{}
+	return e.Data
 }
 
 func (e *RoomFullEvent) GetName() string {
-	return e.name
+	return e.Name
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/event"
+	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
 )
 
 type TakePositionHandler struct {

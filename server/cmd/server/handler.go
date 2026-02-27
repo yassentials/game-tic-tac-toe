@@ -8,7 +8,7 @@ import (
 
 	"github.com/yassentials/game-tic-tac-toe/server/command"
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/event"
+	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
 )
 
 type RequestType int
@@ -82,7 +82,7 @@ func NewWebsocketHandler(cmd WebsocketHandlerCommand) WebsocketHandler {
 func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel()
 
 	if err != nil {
@@ -109,7 +109,10 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			conn.WriteJSON(data)
+			if err := conn.WriteJSON(data); err != nil {
+				log.Printf("[Write JSON] failed: %s\n", err.Error())
+				return
+			}
 		})
 
 		<-ctx.Done()
@@ -127,7 +130,7 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 
 		msgType, msg, err := conn.ReadMessage()
 
-		log.Printf("Message type: %s\n", msgType)
+		log.Printf("Message type: %d\n", msgType)
 
 		if err != nil {
 			log.Printf("[Read Message] failed: %s\n", err.Error())
@@ -216,7 +219,6 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 		default:
-			continue
 		}
 	}
 }

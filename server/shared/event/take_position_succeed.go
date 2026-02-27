@@ -10,21 +10,21 @@ type TakePositionSucceedEventData struct {
 }
 
 type TakePositionSucceedEvent struct {
-	data TakePositionSucceedEventData
-	name string
+	Name string                       `json:"name"`
+	Data TakePositionSucceedEventData `json:"data"`
 }
 
 func NewTakePositionSucceedEvent(data TakePositionSucceedEventData) *TakePositionSucceedEvent {
 	return &TakePositionSucceedEvent{
-		name: EVENT_TAKE_POSITION_SUCCEED,
-		data: data,
+		Name: EVENT_TAKE_POSITION_SUCCEED,
+		Data: data,
 	}
 }
 
 func (e *TakePositionSucceedEvent) GetData() any {
-	return e.data
+	return e.Data
 }
 
 func (e *TakePositionSucceedEvent) GetName() string {
-	return e.name
+	return e.Name
 }

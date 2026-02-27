@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/event"
 	"github.com/yassentials/game-tic-tac-toe/server/infra"
+	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
 )
 
 type CreateGameHandler struct {
@@ -14,7 +14,7 @@ type CreateGameHandler struct {
 	eventManager domain.EventManager[any]
 }
 
-func NewCreateGame(lobby domain.Lobby, codeGen func() string) CreateGameHandler {
+func NewCreateGameHandler(lobby domain.Lobby, codeGen func() string) CreateGameHandler {
 	return CreateGameHandler{
 		lobby:        lobby,
 		codeGen:      codeGen,

@@ -10,21 +10,21 @@ type PlayerJoinedEventData struct {
 }
 
 type PlayerJoinedEvent struct {
-	name string
-	data PlayerJoinedEventData
+	Name string                `json:"name"`
+	Data PlayerJoinedEventData `json:"data"`
 }
 
 func NewPlayerJoinedEvent(data PlayerJoinedEventData) *PlayerJoinedEvent {
 	return &PlayerJoinedEvent{
-		name: EVENT_ROOM_FULL,
-		data: data,
+		Name: EVENT_ROOM_FULL,
+		Data: data,
 	}
 }
 
 func (e *PlayerJoinedEvent) GetData() any {
-	return e.data
+	return e.Data
 }
 
 func (e *PlayerJoinedEvent) GetName() string {
-	return e.name
+	return e.Name
 }

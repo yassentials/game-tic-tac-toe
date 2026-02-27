@@ -1,0 +1,3 @@
+packages:
+  - path: "github.com/yassentials/game-tic-tac-toe/server/shared/event"
+    output_path: "gen/types.ts"
