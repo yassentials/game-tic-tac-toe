@@ -8,6 +8,10 @@ With my limited understanding of Typescript, I tried to create a simple Tic-Tac-
 - 2 Player mode (play against yourself)
 - Online mode (not yet implemented!)
 
+## Prerequisites
+
+Copy the gen/ directory from server/ to client/
+
 ## TODO
 
 - Add online mode

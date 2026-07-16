@@ -165,7 +165,7 @@ onMounted(async () => {
         </div>
 
         <div v-if="isOver" class="absolute inset-0 bg-slate-800/80 flex justify-center items-center p-4">
-            <div class="bg-white shadow-xl w-full max-w-[350px] text-slate-800 text-xl rounded-lg p-6">
+            <div class="bg-white shadow-xl w-full max-w-87.5 text-slate-800 text-xl rounded-lg p-6">
                 <p class="text-2xl font-bold mb-6 bg-slate-600 text-slate-200 text-center rounded-md">{{ infoText }}</p>
                 <p class="text-xl font-semibold mb-6">Do you want to continue?</p>
                 <div class="ml-auto flex justify-end gap-x-3">
