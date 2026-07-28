@@ -3,8 +3,8 @@ package event
 const EVENT_ROOM_FULL = "room-full"
 
 type RoomFullEvent struct {
-	Name string   `json:"name"`
-	Data struct{} `json:"data"`
+	Name string
+	Data struct{}
 }
 
 func NewRoomFullEvent() *RoomFullEvent {

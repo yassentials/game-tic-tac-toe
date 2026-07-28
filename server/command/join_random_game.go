@@ -3,8 +3,8 @@ package command
 import (
 	"fmt"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/event"
 )
 
 type JoinRandomGameHandler struct {
@@ -18,13 +18,14 @@ func NewJoinRandomGameHandler(lobby domain.Lobby) *JoinRandomGameHandler {
 }
 
 type JoinRandomGameCommand struct {
-	PlayerName       string
+	PlayerName string
+	// PlayerIP         string
 	PlayerCharacater domain.Character
 }
 
 func (h *JoinRandomGameHandler) Handle(cmd JoinRandomGameCommand) (domain.Game, domain.Player, error) {
+	// add a validation if the connnection has alraedy joined to a game.
 	game, err := h.lobby.FindRandomGameAvailable()
-
 	if err != nil {
 		return nil, nil, fmt.Errorf("[Join Random Game] Failed: %w", err)
 	}

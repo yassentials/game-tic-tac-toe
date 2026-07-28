@@ -6,13 +6,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/yassentials/game-tic-tac-toe/server/command"
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
+	"github.com/up9t/game-tic-tac-toe/server/command"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/event"
 )
 
-type RequestType int
-type ResponseType int
+type (
+	RequestType  int
+	ResponseType int
+)
 
 const (
 	TYPE_REQ_GAME_JOIN_RANDOM RequestType = iota
@@ -101,8 +103,10 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		<-ready
 
-		unlistener := activeGame.GetEventManager().Listen(event.EVENT_TAKE_POSITION_SUCCEED, func(e domain.Event[any]) {
+		unlisten := activeGame.GetEventManager().Listen(event.EVENT_TAKE_POSITION_SUCCEED, func(e domain.Event[any]) {
 			data, ok := e.GetData().(event.TakePositionSucceedEventData)
+
+			// TODO: need to convert data to protobuf scema and encode with protojson
 
 			if !ok {
 				log.Println("[Interface conversion] failed")
@@ -122,7 +126,7 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 			Game:   activeGame,
 		})
 
-		unlistener()
+		unlisten()
 	}()
 
 	for {
@@ -156,7 +160,6 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				PlayerName:       req.Name,
 				PlayerCharacater: req.Character,
 			})
-
 			if err != nil {
 				log.Printf("[Create Game] failed: %s\n", err.Error())
 				continue
@@ -175,7 +178,6 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				PlayerName:       req.Name,
 				PlayerCharacater: req.Character,
 			})
-
 			if err != nil {
 				log.Printf("[Join Random] failed: %s\n", err.Error())
 				continue
@@ -195,7 +197,6 @@ func (h WebsocketHandler) Handle(w http.ResponseWriter, r *http.Request) {
 				PlayerCharacater: req.Character,
 				Code:             req.Code,
 			})
-
 			if err != nil {
 				log.Printf("[Join Code] failed: %s\n", err.Error())
 				continue

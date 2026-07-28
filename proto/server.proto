@@ -1,0 +1,70 @@
+
+enum PlayerCharacter {
+  NONE = 1;
+  X = 2;
+  O = 3;
+}
+
+enum GameType {
+  PUBLIC = 1;
+  PRIVATE = 2;
+}
+enum GameResult {
+  NONE = 1;
+  EITHER_WIN = 2;
+  DRAW = 3;
+}
+
+message Player {
+  string name = 1;
+  PlayerCharacter character = 2;
+}
+
+message CreateNewGameRequest {
+  Player player = 1;
+  GameType game_type = 2;
+}
+message CreateNewGameResponse {
+}
+
+message JoinGameByCodeRequest {
+  string code = 1;
+  Player player = 2;
+}
+message JoinGameByCodeResponse {
+
+}
+
+message JoinRandomGameRequest {
+  Player player = 1;
+}
+message JoinRandomGameResponse {
+
+}
+
+message LeaveGameRequest {}
+message LeaveGameResponse {
+
+}
+
+message TakePositionRequest {
+
+}
+
+// Event for broadcast
+
+message ResultAnnouncedEvent {
+  GameResult result = 1;
+  optional Player player = 2;
+}
+
+message PlayerJoinedEvent {
+  Player player = 1;
+}
+
+message RoomFullEvent {}
+
+message TakePositionSucceededEvent {
+  int32 index = 1;
+  PlayerCharacter character = 2;
+}

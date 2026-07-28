@@ -10,7 +10,7 @@
                 </div>
                 <div class="flex gap-5 items-center">
                     <a href="#about" class="hover:bg-slate-700 px-3 py-2">About</a>
-                    <a href="https://github.com/yassentials/game-tic-tac-toe" class="hover:bg-slate-700 px-3 py-2">Github</a>
+                    <a href="https://github.com/up9t/game-tic-tac-toe" class="hover:bg-slate-700 px-3 py-2">Github</a>
                 </div>
             </div>
         </div>

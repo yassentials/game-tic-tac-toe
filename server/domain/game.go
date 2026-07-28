@@ -7,9 +7,11 @@ import (
 	"sync"
 )
 
-type GameState int
-type GameType int
-type GameResult int
+type (
+	GameState  int
+	GameType   int
+	GameResult int
+)
 
 const (
 	GAME_RESULT_NONE GameResult = iota
@@ -38,7 +40,7 @@ type Room interface {
 	IsFull() bool
 	IsPublic() bool
 	Join(player Player) error
-	Leave(player Player)
+	Leave(player Player) bool
 }
 
 type Game interface {
@@ -119,17 +121,18 @@ func (g *BaseGame) IsPublic() bool {
 func (g *BaseGame) GetEventManager() EventManager[any] {
 	return g.eventManager
 }
+
 func (g *BaseGame) TakePosition(player Player, index int) error {
 	g.mu.Lock()
 
 	if g.state != GAME_STATE_PLAYING {
 		g.mu.Unlock()
-		return fmt.Errorf("[Game State Mismatch] expected %d, got %d.\n", GAME_STATE_PLAYING, g.state)
+		return fmt.Errorf("[Game State Mismatch] expected %d, got %d", GAME_STATE_PLAYING, g.state)
 	}
 
 	if index < 0 || index >= len(g.board) {
 		g.mu.Unlock()
-		return fmt.Errorf("[Invalid Index] must between %d and %d\n", 0, len(g.board)-1)
+		return fmt.Errorf("[Invalid Index] must between %d and %d", 0, len(g.board)-1)
 	}
 
 	if player.GetCharacter() == CHAR_NONE {
@@ -170,16 +173,20 @@ func (g *BaseGame) Join(player Player) error {
 	return nil
 }
 
-func (g *BaseGame) Leave(player Player) {
+func (g *BaseGame) Leave(player Player) bool {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 
+	success := false
 	for i, p := range g.players {
 		if p.GetId() == player.GetId() {
 			g.players = slices.Delete(g.players, i, i+1)
+			success = true
 			break
 		}
 	}
+
+	return success
 }
 
 func (g *BaseGame) getCurrentPlayer() Player {

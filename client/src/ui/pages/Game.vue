@@ -16,7 +16,7 @@ import Player from "../../core/players/offline-player";
 
 const route = useRoute();
 const router = useRouter();
-const name = "yassentials";
+const name = "up9t";
 const isOver = ref<boolean>(false);
 const infoText = ref<string>("");
 

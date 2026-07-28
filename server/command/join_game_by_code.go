@@ -3,7 +3,8 @@ package command
 import (
 	"fmt"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/event"
 )
 
 type JoinGameByCodeHandler struct {
@@ -32,7 +33,6 @@ func (h *JoinGameByCodeHandler) Handle(cmd JoinGameByCodeCommand) (domain.Game, 
 	}
 
 	game, err := h.lobby.FindGameByCode(code)
-
 	if err != nil {
 		return nil, nil, fmt.Errorf("[Join Code] Failed: %w", err)
 	}
@@ -41,6 +41,15 @@ func (h *JoinGameByCodeHandler) Handle(cmd JoinGameByCodeCommand) (domain.Game, 
 
 	if err := game.Join(player); err != nil {
 		return nil, nil, fmt.Errorf("[Join Code] Failed: %w", err)
+	}
+
+	game.GetEventManager().Dispatch(event.NewPlayerJoinedEvent(event.PlayerJoinedEventData{
+		Name:      player.GetName(),
+		Character: player.GetCharacter(),
+	}))
+
+	if game.IsFull() {
+		game.GetEventManager().Dispatch(event.NewRoomFullEvent())
 	}
 
 	return game, player, nil

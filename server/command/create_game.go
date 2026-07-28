@@ -3,9 +3,9 @@ package command
 import (
 	"fmt"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/infra"
-	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/event"
+	"github.com/up9t/game-tic-tac-toe/server/infra"
 )
 
 type CreateGameHandler struct {

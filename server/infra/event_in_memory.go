@@ -4,7 +4,7 @@ import (
 	"maps"
 	"sync"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
 )
 
 type InMemoryEventManager struct {

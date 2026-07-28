@@ -3,13 +3,15 @@ package query
 import (
 	"log"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
 )
 
 // filter by
 // accessibility [all,joinable]
-type ListFilterFlag int
-type ListFilterAccessibilityFlag ListFilterFlag
+type (
+	ListFilterFlag              int
+	ListFilterAccessibilityFlag ListFilterFlag
+)
 
 // type OtherFilterExample ListFilterFlag
 
@@ -48,5 +50,5 @@ func (h *ListPublicGameHandler) Handle(query ListPublicGameQuery) []domain.Game 
 
 	log.Printf("[List Game] Filter unavailable: %b.\n", query.FilterFlags)
 
-	return []domain.Game{}
+	return nil
 }

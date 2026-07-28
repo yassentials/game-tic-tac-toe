@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"github.com/yassentials/game-tic-tac-toe/server/command"
-	"github.com/yassentials/game-tic-tac-toe/server/infra"
-	"github.com/yassentials/game-tic-tac-toe/server/utils"
+	"github.com/up9t/game-tic-tac-toe/server/command"
+	"github.com/up9t/game-tic-tac-toe/server/infra"
+	"github.com/up9t/game-tic-tac-toe/server/utils"
 )
 
 var upgrader = websocket.Upgrader{
@@ -26,7 +26,6 @@ var upgrader = websocket.Upgrader{
 const GAME_CODE_LENGTH = 5
 
 func main() {
-
 	host := flag.String("host", "localhost", "")
 	port := flag.Int("port", 8080, "")
 

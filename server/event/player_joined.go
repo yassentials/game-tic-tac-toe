@@ -1,17 +1,17 @@
 package event
 
-import "github.com/yassentials/game-tic-tac-toe/server/domain"
+import "github.com/up9t/game-tic-tac-toe/server/domain"
 
 const EVENT_PLAYER_JOINED = "player-joined"
 
 type PlayerJoinedEventData struct {
-	Name      string           `json:"nam"`
-	Character domain.Character `json:"cha"`
+	Name      string
+	Character domain.Character
 }
 
 type PlayerJoinedEvent struct {
-	Name string                `json:"name"`
-	Data PlayerJoinedEventData `json:"data"`
+	Name string
+	Data PlayerJoinedEventData
 }
 
 func NewPlayerJoinedEvent(data PlayerJoinedEventData) *PlayerJoinedEvent {

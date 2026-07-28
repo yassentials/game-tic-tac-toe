@@ -5,7 +5,7 @@ import (
 	"math/rand/v2"
 	"sync"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
 )
 
 type InMemoryLobby struct {
@@ -35,11 +35,11 @@ func (l *InMemoryLobby) FindGameByCode(code string) (domain.Game, error) {
 	game := l.games[code]
 
 	if game == nil {
-		return game, fmt.Errorf("game with code %s not found.", code)
+		return game, fmt.Errorf("game with code %s not found", code)
 	}
 
 	if game.IsFull() {
-		return game, fmt.Errorf("game with code %s is full.", code)
+		return game, fmt.Errorf("game with code %s is full", code)
 	}
 
 	return game, nil
@@ -92,7 +92,7 @@ func (l *InMemoryLobby) FindRandomGameAvailable() (domain.Game, error) {
 	}
 
 	if len(keys) <= 0 {
-		return nil, fmt.Errorf("[Find Random Game] unvailable.\n")
+		return nil, fmt.Errorf("[Find Random Game] unvailable")
 	}
 
 	randKey := rand.IntN(len(keys))

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/yassentials/game-tic-tac-toe/server/domain"
-	"github.com/yassentials/game-tic-tac-toe/server/shared/event"
+	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/server/shared/event"
 )
 
 type TakePositionHandler struct {
@@ -38,8 +38,8 @@ func (h *TakePositionHandler) Handle(cmd TakePositionCommand) error {
 	}
 
 	if game.GetState() == domain.GAME_STATE_RESULT {
-
 		result := game.GetResult()
+
 		switch result {
 		case domain.GAME_RESULT_DRAW:
 		case domain.GAME_RESULT_EITHER_WIN:

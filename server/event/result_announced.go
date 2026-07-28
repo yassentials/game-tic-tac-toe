@@ -1,6 +1,6 @@
 package event
 
-import "github.com/yassentials/game-tic-tac-toe/server/domain"
+import "github.com/up9t/game-tic-tac-toe/server/domain"
 
 const EVENT_RESULT_ANNOUNCED = "result-announced"
 
@@ -10,8 +10,8 @@ type ResultAnnouncedEventData struct {
 }
 
 type ResultAnnouncedEvent struct {
-	Name string                   `json:"name"`
-	Data ResultAnnouncedEventData `json:"data"`
+	Name string
+	Data ResultAnnouncedEventData
 }
 
 func NewResultAnnouncedEvent(result domain.GameResult, player domain.Player) *ResultAnnouncedEvent {
