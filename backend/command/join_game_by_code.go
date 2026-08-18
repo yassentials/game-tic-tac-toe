@@ -3,8 +3,8 @@ package command
 import (
 	"fmt"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
-	"github.com/up9t/game-tic-tac-toe/server/event"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/event"
 )
 
 type JoinGameByCodeHandler struct {

@@ -1,6 +1,6 @@
 package event
 
-import "github.com/up9t/game-tic-tac-toe/server/domain"
+import "github.com/up9t/game-tic-tac-toe/backend/domain"
 
 const EVENT_TAKE_POSITION_SUCCEED = "take-position-Succeed"
 

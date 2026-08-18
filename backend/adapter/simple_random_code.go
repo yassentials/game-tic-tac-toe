@@ -1,14 +1,17 @@
-package utils
+package adapter
 
 import (
 	"math/rand/v2"
 )
 
-func GenRandomCode(length int) string {
-	// ate the whole keyboard lol
+type SimpleRandomCode struct {
+	Length int
+}
+
+func (this SimpleRandomCode) Generate() string {
 	const charsets = "QWERTYUIOPASDFGHJKLZXCVBNM"
 
-	result := make([]byte, length)
+	result := make([]byte, this.Length)
 
 	for i := range result {
 		randIndex := rand.IntN(len(charsets))

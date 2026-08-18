@@ -1,11 +1,11 @@
-package infra
+package adapter
 
 import (
 	"fmt"
 	"math/rand/v2"
 	"sync"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
 )
 
 type InMemoryLobby struct {

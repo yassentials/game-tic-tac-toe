@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/up9t/game-tic-tac-toe/server/command"
-	"github.com/up9t/game-tic-tac-toe/server/domain"
-	"github.com/up9t/game-tic-tac-toe/server/event"
+	"github.com/up9t/game-tic-tac-toe/backend/command"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/event"
 )
 
 type (

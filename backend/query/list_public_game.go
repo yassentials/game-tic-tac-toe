@@ -3,7 +3,7 @@ package query
 import (
 	"log"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
 )
 
 // filter by

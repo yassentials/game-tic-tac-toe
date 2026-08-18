@@ -1,10 +1,10 @@
-package infra
+package adapter
 
 import (
 	"maps"
 	"sync"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
 )
 
 type InMemoryEventManager struct {

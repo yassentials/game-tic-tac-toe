@@ -5,11 +5,11 @@ group "default" {
 target "client" {
   context = "./client" 
   dockerfile = "Dockerfile"
-  tags = [ "ghcr.io/up9t/game-tic-tac-toe/client:latest" ]
+  tags = [ "ghcr.io/up9t/game-tic-tac-toe/frontend:latest" ]
 }
 
 target "server" {
   context = "./server"
   dockerfile = "Dockerfile"
-  tags = [ "ghcr.io/up9t/game-tic-tac-toe/server:latest" ]
+  tags = [ "ghcr.io/up9t/game-tic-tac-toe/backend:latest" ]
 }

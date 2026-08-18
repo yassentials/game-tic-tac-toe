@@ -1,6 +1,6 @@
 package command
 
-import "github.com/up9t/game-tic-tac-toe/server/domain"
+import "github.com/up9t/game-tic-tac-toe/backend/domain"
 
 type LeaveGameHandler struct {
 }

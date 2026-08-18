@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
-	"github.com/up9t/game-tic-tac-toe/server/shared/event"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/event"
 )
 
 type TakePositionHandler struct {

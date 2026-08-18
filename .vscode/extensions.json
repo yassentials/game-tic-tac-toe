@@ -1,9 +1,7 @@
 {
     "recommendations": [
         "bradlc.vscode-tailwindcss",
-        "biomejs.biome",
         "golang.go",
-        "vscodevim.vim",
         "vue.volar"
     ]
 }

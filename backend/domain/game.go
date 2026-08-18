@@ -32,6 +32,9 @@ const (
 
 	// use code to join
 	GAME_TYPE_PRIVATE
+
+	GAME_TYPE_OFFLINE
+	GAME_TYPE_OFFLINE_BOT
 )
 
 type Room interface {
@@ -56,7 +59,6 @@ type Game interface {
 }
 
 type BaseGame struct {
-	// type is reserved keyword here, so I had to use gameType instead
 	result       GameResult
 	gameType     GameType
 	state        GameState

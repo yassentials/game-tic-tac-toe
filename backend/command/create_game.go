@@ -3,9 +3,9 @@ package command
 import (
 	"fmt"
 
-	"github.com/up9t/game-tic-tac-toe/server/domain"
-	"github.com/up9t/game-tic-tac-toe/server/event"
-	"github.com/up9t/game-tic-tac-toe/server/infra"
+	"github.com/up9t/game-tic-tac-toe/backend/adapter"
+	"github.com/up9t/game-tic-tac-toe/backend/domain"
+	"github.com/up9t/game-tic-tac-toe/backend/event"
 )
 
 type CreateGameHandler struct {
@@ -18,7 +18,7 @@ func NewCreateGameHandler(lobby domain.Lobby, codeGen func() string) CreateGameH
 	return CreateGameHandler{
 		lobby:        lobby,
 		codeGen:      codeGen,
-		eventManager: infra.NewInMemoryEventManager(),
+		eventManager: adapter.NewInMemoryEventManager(),
 	}
 }
 

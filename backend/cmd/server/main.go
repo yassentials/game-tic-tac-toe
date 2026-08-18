@@ -7,9 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"github.com/up9t/game-tic-tac-toe/server/command"
-	"github.com/up9t/game-tic-tac-toe/server/infra"
-	"github.com/up9t/game-tic-tac-toe/server/utils"
+	"github.com/up9t/game-tic-tac-toe/backend/adapter"
+	"github.com/up9t/game-tic-tac-toe/backend/command"
 )
 
 var upgrader = websocket.Upgrader{
@@ -37,12 +36,13 @@ func main() {
 
 	addr := fmt.Sprintf("%s:%d", *host, *port)
 
-	lobby := infra.NewInMemoryLobby()
+	lobby := adapter.NewInMemoryLobby()
+	codeGen := adapter.SimpleRandomCode{
+		Length: GAME_CODE_LENGTH,
+	}
 
 	handler := NewWebsocketHandler(WebsocketHandlerCommand{
-		CreateGame: command.NewCreateGameHandler(lobby, func() string {
-			return utils.GenRandomCode(GAME_CODE_LENGTH)
-		}),
+		CreateGame: command.NewCreateGameHandler(lobby, codeGen.Generate),
 	})
 
 	mux := http.NewServeMux()

@@ -12,13 +12,9 @@
 		"vscode": {
 			"extensions": [
 				"bradlc.vscode-tailwindcss",
-				"docker.docker",
 				"golang.Go",
-				"ms-azuretools.vscode-containers",
-				"ms-azuretools.vscode-docker",
 				"GitHub.vscode-github-actions",
 				"Vue.volar",
-				"biomejs.biome"
 			]
 		}
 	}
